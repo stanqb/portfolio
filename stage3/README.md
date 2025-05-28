@@ -299,72 +299,44 @@ struct GarmentPosition: Codable {
 
 ### Séquence 1 : Authentification Utilisateur
 
-```
-Utilisateur -> App iOS -> Firebase Auth -> App iOS -> Utilisateur
-    |            |            |            |            |
-    |   Tap "Se connecter avec Apple"       |            |
-    |----------->|            |            |            |
-    |            |  Sign In with Apple     |            |
-    |            |----------->|            |            |
-    |            |            | Validate   |            |
-    |            |            |----------->|            |
-    |            |            |   Token    |            |
-    |            |            |<-----------|            |
-    |            |  User Data |            |            |
-    |            |<-----------|            |            |
-    |            |            |   Update UI State       |
-    |            |----------->|            |            |
-    |            |            |            |  Dashboard |
-    |<-----------|            |            |<-----------|
-```
+![Diagramme de séquence - Authentification](./diagrams/auth-sequence.png)
+
+**Flow** : Utilisateur → App iOS → Apple Sign In → Firebase Auth → Dashboard
+
+**Étapes principales :**
+1. Utilisateur tape "Se connecter avec Apple"
+2. App iOS initie le processus Apple Sign In
+3. Apple authentifie l'utilisateur et retourne un token
+4. Firebase Auth valide le token Apple
+5. L'utilisateur est connecté et dirigé vers le dashboard
 
 ### Séquence 2 : Ajout d'un Vêtement
 
-```
-Utilisateur -> App iOS -> Vision API -> Firebase Storage -> Firestore -> App iOS
-    |            |            |              |              |            |
-    |   Prend photo          |              |              |            |
-    |----------->|            |              |              |            |
-    |            | Process Image             |              |            |
-    |            |----------->|              |              |            |
-    |            |  Clean Image              |              |            |
-    |            |<-----------|              |              |            |
-    |            |    Upload Image           |              |            |
-    |            |------------------------->|              |            |
-    |            |           Image URL       |              |            |
-    |            |<-------------------------|              |            |
-    |            |        Save Metadata     |              |            |
-    |            |------------------------------------->|            |
-    |            |         Success          |              |            |
-    |            |<-------------------------------------|            |
-    |            |    Update UI             |              |            |
-    |            |----------->|              |              |            |
-    |   Confirmation         |              |              |            |
-    |<-----------|            |              |              |            |
-```
+![Diagramme de séquence - Ajout de vêtement](./diagrams/garment-sequence.png)
+
+**Flow** : Photo → Vision API → Firebase Storage → Firestore → Interface
+
+**Étapes principales :**
+1. Utilisateur prend une photo du vêtement
+2. App iOS traite l'image avec Vision API (suppression arrière-plan)
+3. Si Vision API échoue, fallback vers Remove.bg API
+4. Image optimisée uploadée vers Firebase Storage
+5. Métadonnées du vêtement sauvegardées dans Firestore
+6. Interface mise à jour avec le nouveau vêtement
 
 ### Séquence 3 : Création d'Outfit
 
-```
-Utilisateur -> App iOS -> Local Storage -> Firebase -> App iOS -> Utilisateur
-    |            |            |              |            |            |
-    |  Glisse vêtements      |              |            |            |
-    |----------->|            |              |            |            |
-    |            | Update Canvas             |            |            |
-    |            |----------->|              |            |            |
-    |            |  Tap "Sauvegarder"       |            |            |
-    |----------->|            |              |            |            |
-    |            |   Save Locally           |            |            |
-    |            |----------->|              |            |            |
-    |            |       Sync to Firebase   |            |            |
-    |            |------------------------->|            |            |
-    |            |        Success           |            |            |
-    |            |<-------------------------|            |            |
-    |            |    Update UI             |            |            |
-    |            |----------->|              |            |            |
-    |   Tenue sauvegardée    |              |            |            |
-    |<-----------|            |              |            |            |
-```
+![Diagramme de séquence - Création d'outfit](./diagrams/outfit-sequence.png)
+
+**Flow** : Canvas → Drag & Drop → Suggestions couleurs → Sauvegarde → Sync
+
+**Étapes principales :**
+1. Utilisateur ouvre le créateur d'outfit
+2. Glisse-dépose des vêtements sur le canvas
+3. Color Engine fournit des suggestions en temps réel
+4. Utilisateur sauvegarde la tenue
+5. Sauvegarde locale immédiate puis synchronisation Firebase
+6. Confirmation et mise à jour de la bibliothèque d'outfits
 
 ---
 
@@ -701,6 +673,11 @@ Cette documentation technique fournit une base solide pour le développement du 
 - **Tests automatisés** pour la qualité
 
 Le développement peut maintenant débuter avec une vision claire des composants, des interactions et des standards de qualité à respecter.
+
+**Fichiers de diagrammes à créer sur GitHub :**
+- `./diagrams/auth-sequence.png`
+- `./diagrams/garment-sequence.png`
+- `./diagrams/outfit-sequence.png`
 
 ---
 
